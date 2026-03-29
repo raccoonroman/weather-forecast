@@ -16,35 +16,6 @@ theme = createTheme({
       fontWeight: '600',
     },
   },
-  components: {
-    MuiInputLabel: {
-      styleOverrides: {
-        root: {
-          '&.Mui-focused': {
-            color: 'rgba(0, 0, 0, 0.6)',
-          },
-        },
-      },
-    },
-    MuiOutlinedInput: {
-      styleOverrides: {
-        root: {
-          '& .MuiOutlinedInput-notchedOutline': {
-            borderColor: 'rgba(255, 255, 255, 0.3)',
-          },
-
-          '&:hover .MuiOutlinedInput-notchedOutline': {
-            borderColor: 'rgba(255, 255, 255, 0.6)',
-          },
-
-          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-            borderColor: 'rgba(255, 255, 255, 0.6)',
-            borderWidth: '1px',
-          },
-        },
-      },
-    },
-  },
   palette: {
     divider: 'rgba(255, 255, 255, 0.2)',
   },

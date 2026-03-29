@@ -1,51 +1,29 @@
-import './App.css';
-import { Box, Container, Divider, useTheme } from '@mui/material';
+import { CssBaseline } from '@mui/material';
+import { ThemeProvider } from '@mui/material/styles';
+import { theme } from './theme';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-import sky from '@/assets/sky-1.jpg';
+import { HomePage } from './HomePage';
 
-import { SearchInput } from './components/search-input';
-import { WeatherResult } from './components/weather-result';
-import { PageTitle } from './components/page-title';
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 15, // 15 minutes
+      refetchOnWindowFocus: false,
+      retry: false,
+    },
+  },
+});
 
-function App() {
-  const theme = useTheme();
-
+const App = () => {
   return (
-    <Box
-      sx={{
-        backgroundImage: `url(${sky})`,
-        backgroundPosition: 'center',
-        backgroundSize: 'cover',
-        width: '100%',
-        minHeight: '100vh',
-        display: 'flex',
-        pt: '10vh',
-        pb: 5,
-        justifyContent: 'center',
-      }}
-    >
-      <Container maxWidth="xs">
-        <Box
-          component="section"
-          sx={{
-            width: 1,
-            borderRadius: '20px',
-            background: 'rgba(255, 255, 255, 0.2)',
-            backdropFilter: 'blur(5px)',
-            border: `1px solid ${theme.palette.divider}`,
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
-          }}
-        >
-          <PageTitle>Weather Forecast</PageTitle>
-          <Divider />
-          <Box sx={{ p: 2, pt: 3 }}>
-            <SearchInput />
-            <WeatherResult />
-          </Box>
-        </Box>
-      </Container>
-    </Box>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <QueryClientProvider client={queryClient}>
+        <HomePage />
+      </QueryClientProvider>
+    </ThemeProvider>
   );
-}
+};
 
 export default App;
