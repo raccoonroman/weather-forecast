@@ -1,10 +1,15 @@
+import { Box, Typography } from '@mui/material';
+
 import rainy from '@/assets/rainy.svg';
 import sunny from '@/assets/sunny.svg';
 import cloudy from '@/assets/cloudy.svg';
+import type { CityOption } from '@/interfaces';
 
-import { Box, Typography } from '@mui/material';
+interface IProps {
+  city: CityOption | null;
+}
 
-export const WeatherResult = () => {
+export const WeatherResult = ({ city }: IProps) => {
   return (
     <Box sx={{ pt: 2 }}>
       <Typography variant="h4">Vinnytsia, Ukraine</Typography>
@@ -43,8 +48,7 @@ export const WeatherResult = () => {
       >
         <Typography variant="body1" sx={{ mt: 2, display: 'flex' }}>
           {/* <South fontSize="small" sx={{ fontWeight: 700 }} /> */}
-          Min: 15 <sup>°C</sup>,{' '}
-          {/* <North fontSize="small" sx={{ fontWeight: 700 }} /> */}
+          Min: 15 <sup>°C</sup>, {/* <North fontSize="small" sx={{ fontWeight: 700 }} /> */}
           Max: 22 <sup>°C</sup>
         </Typography>
         <Typography variant="body1" sx={{ mt: 2, display: 'flex' }}>
