@@ -5,7 +5,6 @@ import sky from '@/assets/sky-1920.jpg';
 import { SearchAutocomplete } from './components/SearchAutocomplete';
 import { WeatherResult } from './components/WeatherResult';
 import { PageTitle } from './components/PageTitle';
-// import WeatherWidget from './components/Widget';
 import { useState } from 'react';
 import type { CityOption } from './interfaces';
 
@@ -54,7 +53,6 @@ export const HomePage = () => {
             <WeatherResult city={selectedCity} />
           </Box>
         </Box>
-        {/* <WeatherWidget /> */}
       </Container>
     </Box>
   );

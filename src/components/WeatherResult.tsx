@@ -1,4 +1,5 @@
 import { Box, CircularProgress, Typography } from '@mui/material';
+import { AccessTime } from '@mui/icons-material';
 
 import type { CityOption } from '@/interfaces';
 import { useQuery } from '@tanstack/react-query';
@@ -14,6 +15,7 @@ export const WeatherResult = ({ city }: IProps) => {
     queryFn: () => weatherApi.getForecast(`${city!.lat},${city!.lon}`),
     enabled: !!city,
     select: (data) => ({
+      localTime: data.location.localtime,
       conditionText: data.current.condition.text,
       icon: data.current.condition.icon,
       temperature: data.current.temp_c,
@@ -27,26 +29,25 @@ export const WeatherResult = ({ city }: IProps) => {
     return null;
   }
 
-  const formattedDate = new Intl.DateTimeFormat('en-US', {
-    weekday: 'short',
-    day: '2-digit',
-    month: 'long',
-  }).format(new Date());
-
   return (
     <Box sx={{ pt: 2 }}>
       <Typography variant="h4">
         {city.name}, {city.country}
       </Typography>
-      <Typography variant="body1" sx={{ pb: 2 }}>
-        {formattedDate}
-      </Typography>
+
       {isLoading || !data ? (
         <Box sx={{ textAlign: 'center', py: 4 }}>
           <CircularProgress />
         </Box>
       ) : (
         <>
+          <Typography
+            variant="body2"
+            sx={{ pt: 0.5, pb: 2, display: 'flex', alignItems: 'center', gap: 0.5 }}
+          >
+            <AccessTime fontSize="small" />
+            {data.localTime}
+          </Typography>
           <Box
             sx={{
               display: 'grid',
