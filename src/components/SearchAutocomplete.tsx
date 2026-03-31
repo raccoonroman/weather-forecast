@@ -19,6 +19,8 @@ import type { Theme, SxProps } from '@mui/material/styles';
 import { useQuery } from '@tanstack/react-query';
 import { useState, type SyntheticEvent } from 'react';
 
+const MAX_HISTORY_LENGTH = 10;
+
 const sx: SxProps<Theme> = {
   '& .MuiInputLabel-root.Mui-focused': {
     color: 'rgba(0, 0, 0, 0.6)',
@@ -96,7 +98,7 @@ export const SearchAutocomplete = ({ onSelectCity }: IProps) => {
     setHistoryOptions((prev) => {
       return [{ ...value, fromHistory: true }, ...prev.filter((c) => c.id !== value.id)].slice(
         0,
-        10,
+        MAX_HISTORY_LENGTH,
       );
     });
     onSelectCity(value);
@@ -112,7 +114,14 @@ export const SearchAutocomplete = ({ onSelectCity }: IProps) => {
   };
 
   const onUndoClick = () => {
-    setHistoryOptions((prev) => [...deletedCities, ...prev]);
+    setHistoryOptions((prev) => {
+      const mergedOptions = [...deletedCities, ...prev];
+      const uniqueOptions = mergedOptions.filter(
+        (option, index, array) => array.findIndex((item) => item.id === option.id) === index,
+      );
+
+      return uniqueOptions.slice(0, MAX_HISTORY_LENGTH);
+    });
     setSnackbarOpen(false);
   };
 

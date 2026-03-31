@@ -10,7 +10,7 @@ interface IProps {
 }
 
 export const WeatherResult = ({ city }: IProps) => {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['forecast', city?.lat, city?.lon],
     queryFn: () => weatherApi.getForecast(`${city!.lat},${city!.lon}`),
     enabled: !!city,
@@ -34,6 +34,12 @@ export const WeatherResult = ({ city }: IProps) => {
       <Typography variant="h4">
         {city.name}, {city.country}
       </Typography>
+
+      {error && (
+        <Typography variant="body1" color="error" sx={{ mt: 2 }}>
+          Failed to load weather data. Please try again.
+        </Typography>
+      )}
 
       {isLoading || !data ? (
         <Box sx={{ textAlign: 'center', py: 4 }}>
@@ -67,7 +73,7 @@ export const WeatherResult = ({ city }: IProps) => {
                 sx={{ fontWeight: 700, lineHeight: 1, sup: { fontSize: '0.5em' } }}
               >
                 {data.temperature}
-                <sup>°C</sup>
+                <sup>&deg;C</sup>
               </Typography>
               <Typography variant="h4" sx={{ maxWidth: 160 }}>
                 {data.conditionText}
@@ -86,8 +92,8 @@ export const WeatherResult = ({ city }: IProps) => {
           >
             <Typography variant="body1">
               Min: {data.minTemp}
-              <sup>°C</sup>, Max: {data.maxTemp}
-              <sup>°C</sup>
+              <sup>&deg;C</sup>, Max: {data.maxTemp}
+              <sup>&deg;C</sup>
             </Typography>
             <Typography variant="body1">Wind: {data.windSpeed} km/h</Typography>
           </Box>
