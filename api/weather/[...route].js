@@ -9,6 +9,14 @@ function getEndpoint(req) {
     return route;
   }
 
+  const requestUrl = req.url || '';
+  const [pathname] = requestUrl.split('?');
+  const prefix = '/api/weather/';
+
+  if (pathname.startsWith(prefix)) {
+    return pathname.slice(prefix.length);
+  }
+
   return '';
 }
 
