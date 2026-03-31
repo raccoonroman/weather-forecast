@@ -31,12 +31,20 @@ export const HomePage = () => {
         <Box
           component="section"
           sx={{
-            width: 1,
-            borderRadius: '20px',
-            background: 'rgba(255, 255, 255, 0.3)',
-            backdropFilter: 'blur(5px)',
-            border: `1px solid ${theme.palette.divider}`,
-            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+            position: 'relative',
+            isolation: 'isolate',
+
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              inset: 0,
+              borderRadius: '20px',
+              border: `1px solid ${theme.palette.divider}`,
+              background: 'rgba(255, 255, 255, 0.3)',
+              backdropFilter: 'blur(5px)',
+              boxShadow: '0 8px 32px rgba(0, 0, 0, 0.2)',
+              zIndex: -1,
+            },
           }}
         >
           <PageTitle>Weather Forecast</PageTitle>

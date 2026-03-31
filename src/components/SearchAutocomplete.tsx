@@ -1,7 +1,7 @@
-import { weatherApi, type CityDto } from '@/api/weatherApi';
+import { weatherApi } from '@/api/weatherApi';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useLocalStorageState } from '@/hooks/useLocalStorageState';
-import type { CityOption } from '@/interfaces';
+import type { CityDto, CityOption } from '@/interfaces';
 import { Delete } from '@mui/icons-material';
 
 import {
@@ -58,14 +58,7 @@ export const SearchAutocomplete = ({ onSelectCity }: IProps) => {
     queryKey: ['cities', debouncedInputValue],
     queryFn: () => weatherApi.searchCities(debouncedInputValue),
     enabled: !!debouncedInputValue.trim(),
-    select: (cities) =>
-      cities.map((city) => ({
-        id: city.id,
-        name: city.name,
-        region: city.region,
-        country: city.country,
-        fromHistory: false,
-      })),
+    select: (cities) => cities.map((city) => ({ ...city, fromHistory: false })),
   });
   const options = debouncedInputValue.trim() ? (data ?? []) : historyOptions;
   const hasHistoryOptions = historyOptions.length > 0;
@@ -142,9 +135,7 @@ export const SearchAutocomplete = ({ onSelectCity }: IProps) => {
         options={options}
         loading={isLoading}
         filterOptions={(x) => x}
-        getOptionLabel={(option) =>
-          `${option.name}, ${option.region ? option.region + ', ' : ''}${option.country}`
-        }
+        getOptionLabel={(option) => `${option.name}, ${option.country}`}
         isOptionEqualToValue={(option, value) => option.id === value.id}
         inputValue={inputValue}
         value={null}
@@ -168,8 +159,7 @@ export const SearchAutocomplete = ({ onSelectCity }: IProps) => {
               key={option.id}
               sx={{ '&&': { display: 'flex', justifyContent: 'space-between' } }}
             >
-              {option.name}, {option.region ? option.region + ', ' : ''}
-              {option.country}
+              {option.name}, {option.country}
               {option.fromHistory && (
                 <IconButton size="small" edge="end" onClick={onRemoveHistoryOption(option)}>
                   <Delete fontSize="small" />

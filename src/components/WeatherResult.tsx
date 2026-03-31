@@ -1,61 +1,97 @@
-import { Box, Typography } from '@mui/material';
+import { Box, CircularProgress, Typography } from '@mui/material';
 
-import rainy from '@/assets/rainy.svg';
-import sunny from '@/assets/sunny.svg';
-import cloudy from '@/assets/cloudy.svg';
 import type { CityOption } from '@/interfaces';
+import { useQuery } from '@tanstack/react-query';
+import { weatherApi } from '@/api/weatherApi';
 
 interface IProps {
   city: CityOption | null;
 }
 
 export const WeatherResult = ({ city }: IProps) => {
+  const { data, isLoading } = useQuery({
+    queryKey: ['forecast', city?.lat, city?.lon],
+    queryFn: () => weatherApi.getForecast(`${city!.lat},${city!.lon}`),
+    enabled: !!city,
+    select: (data) => ({
+      conditionText: data.current.condition.text,
+      icon: data.current.condition.icon,
+      temperature: data.current.temp_c,
+      windSpeed: data.current.wind_kph,
+      minTemp: data.forecast.forecastday[0].day.mintemp_c,
+      maxTemp: data.forecast.forecastday[0].day.maxtemp_c,
+    }),
+  });
+
+  if (!city) {
+    return null;
+  }
+
+  const formattedDate = new Intl.DateTimeFormat('en-US', {
+    weekday: 'short',
+    day: '2-digit',
+    month: 'long',
+  }).format(new Date());
+
   return (
     <Box sx={{ pt: 2 }}>
-      <Typography variant="h4">Vinnytsia, Ukraine</Typography>
-      <Typography variant="body1" sx={{ pb: 2 }}>
-        Tue, 20 Jun
+      <Typography variant="h4">
+        {city.name}, {city.country}
       </Typography>
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          alignItems: 'center',
-          justifyContent: 'center',
-          columnGap: 4,
-          py: 1,
-        }}
-      >
-        <Box sx={{ textAlign: 'center' }}>
-          <img src={cloudy} width={100} height={100} alt="Cloudy" />
+      <Typography variant="body1" sx={{ pb: 2 }}>
+        {formattedDate}
+      </Typography>
+      {isLoading || !data ? (
+        <Box sx={{ textAlign: 'center', py: 4 }}>
+          <CircularProgress />
         </Box>
-        <Box>
-          <Typography
-            variant="h2"
-            sx={{ fontWeight: 700, lineHeight: 1, sup: { fontSize: '0.5em' } }}
+      ) : (
+        <>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 2fr',
+              alignItems: 'center',
+              justifyContent: 'center',
+              py: 1,
+              columnGap: 1,
+            }}
           >
-            18<sup>°C</sup>
-          </Typography>
-          <Typography variant="h4">Cloudy</Typography>
-        </Box>
-      </Box>
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <Typography variant="body1" sx={{ mt: 2, display: 'flex' }}>
-          {/* <South fontSize="small" sx={{ fontWeight: 700 }} /> */}
-          Min: 15 <sup>°C</sup>, {/* <North fontSize="small" sx={{ fontWeight: 700 }} /> */}
-          Max: 22 <sup>°C</sup>
-        </Typography>
-        <Typography variant="body1" sx={{ mt: 2, display: 'flex' }}>
-          {/* <Air fontSize="small" sx={{ color: '#000', mr: 0.5 }} /> */}
-          Wind: 10km/h
-        </Typography>
-      </Box>
+            <Box sx={{ textAlign: 'center' }}>
+              <img src={data.icon} width={64} height={64} alt={data.conditionText} />
+            </Box>
+            <Box>
+              <Typography
+                variant="h3"
+                sx={{ fontWeight: 700, lineHeight: 1, sup: { fontSize: '0.5em' } }}
+              >
+                {data.temperature}
+                <sup>°C</sup>
+              </Typography>
+              <Typography variant="h4" sx={{ maxWidth: 160 }}>
+                {data.conditionText}
+              </Typography>
+            </Box>
+          </Box>
+          <Box
+            sx={{
+              mt: 2,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: 1,
+              flexWrap: 'wrap',
+            }}
+          >
+            <Typography variant="body1">
+              Min: {data.minTemp}
+              <sup>°C</sup>, Max: {data.maxTemp}
+              <sup>°C</sup>
+            </Typography>
+            <Typography variant="body1">Wind: {data.windSpeed} km/h</Typography>
+          </Box>
+        </>
+      )}
     </Box>
   );
 };

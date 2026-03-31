@@ -1,22 +1,13 @@
 import { buildUrl } from '@/config/api';
 import { fetchClient } from './fetchClient';
-
-export type CityDto = {
-  id: number;
-  name: string;
-  region: string;
-  country: string;
-  lat: number;
-  lon: number;
-  url: string;
-};
+import type { CityDto, WeatherDto } from '@/interfaces';
 
 export const weatherApi = {
   async searchCities(query: string): Promise<CityDto[]> {
     return fetchClient(buildUrl('/search.json', { q: query }));
   },
 
-  async getForecast(city: string) {
-    return fetchClient(buildUrl('/forecast.json', { q: city }));
+  async getForecast(query: string): Promise<WeatherDto> {
+    return fetchClient(buildUrl('/forecast.json', { q: query }));
   },
 };
