@@ -29,17 +29,19 @@ export const WeatherResult = ({ city }: IProps) => {
     return null;
   }
 
+  if (error) {
+    return (
+      <Typography variant="body1" color="error" sx={{ mt: 2 }}>
+        Failed to load weather data. Please try again.
+      </Typography>
+    );
+  }
+
   return (
     <Box sx={{ pt: 2 }}>
       <Typography variant="h4">
         {city.name}, {city.country}
       </Typography>
-
-      {error && (
-        <Typography variant="body1" color="error" sx={{ mt: 2 }}>
-          Failed to load weather data. Please try again.
-        </Typography>
-      )}
 
       {isLoading || !data ? (
         <Box sx={{ textAlign: 'center', py: 4 }}>
