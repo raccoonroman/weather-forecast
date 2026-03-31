@@ -1,4 +1,3 @@
-import './App.css';
 import { Box, Container, Divider, useTheme } from '@mui/material';
 
 import sky from '@/assets/sky-1920.jpg';
