@@ -4,12 +4,17 @@ import sky from '@/assets/sky-1920.jpg';
 import { SearchAutocomplete } from './components/SearchAutocomplete';
 import { WeatherResult } from './components/WeatherResult';
 import { PageTitle } from './components/PageTitle';
+import { SEARCH_HISTORY_KEY } from '@/constants/storageKeys';
+import { getLocalStorageItem } from '@/utils/localStorage';
 import { useState } from 'react';
 import type { CityOption } from './interfaces';
 
 export const HomePage = () => {
   const theme = useTheme();
-  const [selectedCity, setSelectedCity] = useState<CityOption | null>(null);
+  const [selectedCity, setSelectedCity] = useState<CityOption | null>(() => {
+    const history = getLocalStorageItem<CityOption[]>(SEARCH_HISTORY_KEY, []);
+    return history[0] ?? null;
+  });
 
   return (
     <Box

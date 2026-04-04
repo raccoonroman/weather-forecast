@@ -1,4 +1,5 @@
 import { weatherApi } from '@/api/weatherApi';
+import { SEARCH_HISTORY_KEY } from '@/constants/storageKeys';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useLocalStorageState } from '@/hooks/useLocalStorageState';
 import type { CityDto, CityOption } from '@/interfaces';
@@ -51,7 +52,7 @@ export const SearchAutocomplete = ({ onSelectCity }: IProps) => {
   const [isAutocompleteOpen, setIsAutocompleteOpen] = useState(false);
   const debouncedInputValue = useDebounce(inputValue, 400);
   const [historyOptions, setHistoryOptions] = useLocalStorageState<CityOption[]>(
-    'searchHistory',
+    SEARCH_HISTORY_KEY,
     [],
   );
   const [deletedCities, setDeletedCities] = useState<CityOption[]>([]);
