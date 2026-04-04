@@ -15,8 +15,9 @@ export const WeatherResult = ({ city }: IProps) => {
     isPending,
     error,
   } = useQuery({
-    queryKey: ['forecast', city],
-    queryFn: () => weatherApi.getForecast(city ? `${city.lat},${city.lon}` : 'auto:ip'),
+    queryKey: ['forecast', city?.lat, city?.lon],
+    queryFn: () => weatherApi.getForecast(`${city?.lat},${city?.lon}`),
+    enabled: !!city,
     select: (data) => ({
       location: data.location,
       conditionText: data.current.condition.text,
@@ -27,6 +28,10 @@ export const WeatherResult = ({ city }: IProps) => {
       maxTemp: data.forecast.forecastday[0].day.maxtemp_c,
     }),
   });
+
+  if (!city) {
+    return null;
+  }
 
   if (error) {
     return (
@@ -39,11 +44,7 @@ export const WeatherResult = ({ city }: IProps) => {
   return (
     <Box sx={{ pt: 2 }}>
       <Typography variant="h4">
-        {city
-          ? `${city.name}, ${city.country}`
-          : forecast
-            ? `${forecast.location.name}, ${forecast.location.country}`
-            : ''}
+        {city.name}, {city.country}
       </Typography>
       {isPending ? (
         <Box sx={{ textAlign: 'center', py: 4 }}>
