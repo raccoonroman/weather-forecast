@@ -10,12 +10,15 @@ interface IProps {
 }
 
 export const WeatherResult = ({ city }: IProps) => {
-  const { data, isLoading, error } = useQuery({
-    queryKey: ['forecast', city?.lat, city?.lon],
-    queryFn: () => weatherApi.getForecast(`${city!.lat},${city!.lon}`),
-    enabled: !!city,
+  const {
+    data: forecast,
+    isPending,
+    error,
+  } = useQuery({
+    queryKey: ['forecast', city],
+    queryFn: () => weatherApi.getForecast(city ? `${city.lat},${city.lon}` : 'auto:ip'),
     select: (data) => ({
-      localTime: data.location.localtime,
+      location: data.location,
       conditionText: data.current.condition.text,
       icon: data.current.condition.icon,
       temperature: data.current.temp_c,
@@ -24,10 +27,6 @@ export const WeatherResult = ({ city }: IProps) => {
       maxTemp: data.forecast.forecastday[0].day.maxtemp_c,
     }),
   });
-
-  if (!city) {
-    return null;
-  }
 
   if (error) {
     return (
@@ -40,10 +39,13 @@ export const WeatherResult = ({ city }: IProps) => {
   return (
     <Box sx={{ pt: 2 }}>
       <Typography variant="h4">
-        {city.name}, {city.country}
+        {city
+          ? `${city.name}, ${city.country}`
+          : forecast
+            ? `${forecast.location.name}, ${forecast.location.country}`
+            : ''}
       </Typography>
-
-      {isLoading || !data ? (
+      {isPending ? (
         <Box sx={{ textAlign: 'center', py: 4 }}>
           <CircularProgress />
         </Box>
@@ -54,7 +56,7 @@ export const WeatherResult = ({ city }: IProps) => {
             sx={{ pt: 0.5, pb: 2, display: 'flex', alignItems: 'center', gap: 0.5 }}
           >
             <AccessTime fontSize="small" />
-            {data.localTime}
+            {forecast.location.localtime}
           </Typography>
           <Box
             sx={{
@@ -67,18 +69,18 @@ export const WeatherResult = ({ city }: IProps) => {
             }}
           >
             <Box sx={{ textAlign: 'center' }}>
-              <img src={data.icon} width={64} height={64} alt={data.conditionText} />
+              <img src={forecast.icon} width={64} height={64} alt={forecast.conditionText} />
             </Box>
             <Box>
               <Typography
                 variant="h3"
                 sx={{ fontWeight: 700, lineHeight: 1, sup: { fontSize: '0.5em' } }}
               >
-                {data.temperature}
+                {forecast.temperature}
                 <sup>&deg;C</sup>
               </Typography>
               <Typography variant="h4" sx={{ maxWidth: 160 }}>
-                {data.conditionText}
+                {forecast.conditionText}
               </Typography>
             </Box>
           </Box>
@@ -93,11 +95,11 @@ export const WeatherResult = ({ city }: IProps) => {
             }}
           >
             <Typography variant="body1">
-              Min: {data.minTemp}
-              <sup>&deg;C</sup>, Max: {data.maxTemp}
+              Min: {forecast.minTemp}
+              <sup>&deg;C</sup>, Max: {forecast.maxTemp}
               <sup>&deg;C</sup>
             </Typography>
-            <Typography variant="body1">Wind: {data.windSpeed} km/h</Typography>
+            <Typography variant="body1">Wind: {forecast.windSpeed} km/h</Typography>
           </Box>
         </>
       )}
